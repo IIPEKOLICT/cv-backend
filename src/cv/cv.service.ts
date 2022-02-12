@@ -4,6 +4,7 @@ import { Cv } from './cv';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, map, Observable } from 'rxjs';
 import { CvDto } from './dto/cv.dto';
+import { DeleteResponseDto } from '../shared/delete-response.dto';
 
 @Injectable()
 export class CvService {
@@ -49,7 +50,7 @@ export class CvService {
     return from(this.cvRepository.save(cv));
   }
 
-  delete(id: number): Observable<number> {
-    return from(this.cvRepository.delete({ id })).pipe(map(() => id));
+  delete(id: number): Observable<DeleteResponseDto> {
+    return from(this.cvRepository.delete({ id })).pipe(map(() => ({ id })));
   }
 }

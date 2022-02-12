@@ -4,6 +4,7 @@ import { Employment } from './employment';
 import { Repository } from 'typeorm';
 import { from, map, Observable, switchMap } from 'rxjs';
 import { EmploymentDto } from './dto/employment.dto';
+import { DeleteResponseDto } from '../shared/delete-response.dto';
 
 @Injectable()
 export class EmploymentService {
@@ -34,7 +35,7 @@ export class EmploymentService {
     );
   }
 
-  delete(id: number): Observable<number> {
-    return from(this.employmentRepository.delete({ id })).pipe(map(() => id));
+  delete(id: number): Observable<DeleteResponseDto> {
+    return from(this.employmentRepository.delete({ id })).pipe(map(() => ({ id })));
   }
 }

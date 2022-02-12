@@ -21,6 +21,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ContactOperation, TechnologyOperation } from '../shared/docs';
 import { Auth } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
+import { DeleteResponseDto } from '../shared/delete-response.dto';
 
 @ApiTags(Route.Contact)
 @Controller(Route.Contact)
@@ -67,11 +68,11 @@ export class ContactController {
   }
 
   @ApiOperation({ summary: ContactOperation.Delete })
-  @ApiResponse({ type: Number })
+  @ApiResponse({ type: DeleteResponseDto })
   @Auth()
   @UseGuards(AuthGuard)
   @Delete(`:${Field.Id}`)
-  delete(@Param(Field.Id) id: number): Observable<number> {
+  delete(@Param(Field.Id) id: number): Observable<DeleteResponseDto> {
     return this.contactService.delete(id);
   }
 }

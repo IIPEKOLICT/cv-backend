@@ -17,6 +17,7 @@ import { EmploymentOperation } from '../shared/docs';
 import { EmploymentDto } from './dto/employment.dto';
 import { Auth } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
+import { DeleteResponseDto } from '../shared/delete-response.dto';
 
 @ApiTags(Route.Employment)
 @Controller(Route.Employment)
@@ -52,11 +53,11 @@ export class EmploymentController {
   }
 
   @ApiOperation({ summary: EmploymentOperation.Delete })
-  @ApiResponse({ type: Number })
+  @ApiResponse({ type: DeleteResponseDto })
   @Auth()
   @UseGuards(AuthGuard)
   @Delete(`:${Field.Id}`)
-  delete(@Param(Field.Id) id: number): Observable<number> {
+  delete(@Param(Field.Id) id: number): Observable<DeleteResponseDto> {
     return this.employmentService.delete(id);
   }
 }

@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { Auth } from './auth.decorator';
 import { AuthGuard } from './auth.guard';
 import { AuthOperation } from '../shared/docs';
+import { AuthResponseDto } from './dto/auth-response.dto';
 
 @ApiTags(Route.Auth)
 @Controller(Route.Auth)
@@ -14,18 +15,18 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ summary: AuthOperation.Auth })
-  @ApiResponse({ type: String })
+  @ApiResponse({ type: AuthResponseDto })
   @Auth()
   @UseGuards(AuthGuard)
   @Get()
-  auth(): Observable<string> {
+  auth(): Observable<AuthResponseDto> {
     return this.authService.auth();
   }
 
   @ApiOperation({ summary: AuthOperation.Login })
-  @ApiResponse({ type: String })
+  @ApiResponse({ type: AuthResponseDto })
   @Post()
-  login(@Body() dto: AuthDto): Observable<string> {
+  login(@Body() dto: AuthDto): Observable<AuthResponseDto> {
     return this.authService.login(dto);
   }
 }

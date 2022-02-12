@@ -19,6 +19,7 @@ import { Auth } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from '../file/file.service';
+import { DeleteResponseDto } from '../shared/delete-response.dto';
 
 @ApiTags(Route.Project)
 @Controller(Route.Project)
@@ -65,11 +66,11 @@ export class ProjectController {
   }
 
   @ApiOperation({ summary: ProjectOperation.Delete })
-  @ApiResponse({ type: Number })
+  @ApiResponse({ type: DeleteResponseDto })
   @Auth()
   @UseGuards(AuthGuard)
   @Delete(`:${Field.Id}`)
-  delete(@Param(Field.Id) id: number): Observable<number> {
+  delete(@Param(Field.Id) id: number): Observable<DeleteResponseDto> {
     return this.projectService.delete(id);
   }
 }
