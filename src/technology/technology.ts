@@ -7,7 +7,6 @@ import { Cv } from '../cv/cv';
 export class Technology {
   @ApiProperty() @PrimaryGeneratedColumn() readonly id: number;
   @ApiProperty() @Column({ unique: true }) name: string;
-  @ApiProperty() @Column({ default: '' }) icon: string;
 
   @ManyToMany(() => Project, (project: Project) => project.technologies, {
     cascade: true,

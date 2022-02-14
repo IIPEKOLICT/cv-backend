@@ -10,6 +10,7 @@ export class CvDto {
   @ApiProperty() readonly job: string;
   @ApiProperty() readonly about: string;
   @ApiProperty() readonly english: string;
+  @ApiProperty() readonly photo: string;
   @ApiProperty({ type: [Contact] }) readonly contacts: Contact[];
   @ApiProperty({ type: [Education] }) readonly educations: Education[];
   @ApiProperty({ type: [Employment] }) readonly employments: Employment[];

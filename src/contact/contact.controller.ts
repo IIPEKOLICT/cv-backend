@@ -3,22 +3,18 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Param, ParseIntPipe,
   Post,
   Put,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
+} from '@nestjs/common'
 import { Field, Route } from '../shared/enums';
 import { ContactService } from './contact.service';
 import { Observable } from 'rxjs';
 import { Contact } from './contact';
 import { ContactDto } from './dto/contact.dto';
-import { FileService } from '../file/file.service';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ContactOperation, TechnologyOperation } from '../shared/docs';
+import { ContactOperation } from '../shared/docs';
 import { Auth } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
 import { DeleteResponseDto } from '../shared/delete-response.dto';
@@ -26,12 +22,9 @@ import { DeleteResponseDto } from '../shared/delete-response.dto';
 @ApiTags(Route.Contact)
 @Controller(Route.Contact)
 export class ContactController {
-  constructor(
-    private readonly contactService: ContactService,
-    private readonly fileService: FileService
-  ) {}
+  constructor(private readonly contactService: ContactService) {}
 
-  @ApiOperation({ summary: TechnologyOperation.Get })
+  @ApiOperation({ summary: ContactOperation.Get })
   @ApiResponse({ type: [Contact] })
   @Get()
   getAll(): Observable<Contact[]> {
@@ -43,13 +36,8 @@ export class ContactController {
   @Auth()
   @UseGuards(AuthGuard)
   @Post()
-  @UseInterceptors(FileInterceptor(Field.Icon))
-  async create(
-    @Body() dto: ContactDto,
-    @UploadedFile() image?: Express.Multer.File
-  ): Promise<Observable<Contact>> {
-    const icon = await this.fileService.create(image);
-    return this.contactService.create(dto, icon);
+  create(@Body() dto: ContactDto): Observable<Contact> {
+    return this.contactService.create(dto);
   }
 
   @ApiOperation({ summary: ContactOperation.Change })
@@ -57,14 +45,8 @@ export class ContactController {
   @Auth()
   @UseGuards(AuthGuard)
   @Put(`:${Field.Id}`)
-  @UseInterceptors(FileInterceptor(Field.Icon))
-  async change(
-    @Param(Field.Id) id: number,
-    @Body() dto: ContactDto,
-    @UploadedFile() image?: Express.Multer.File
-  ): Promise<Observable<Contact>> {
-    const icon = await this.fileService.create(image);
-    return this.contactService.change(id, dto, icon);
+  change(@Param(Field.Id) id: number, @Body() dto: ContactDto): Observable<Contact> {
+    return this.contactService.change(id, dto);
   }
 
   @ApiOperation({ summary: ContactOperation.Delete })
@@ -72,7 +54,7 @@ export class ContactController {
   @Auth()
   @UseGuards(AuthGuard)
   @Delete(`:${Field.Id}`)
-  delete(@Param(Field.Id) id: number): Observable<DeleteResponseDto> {
+  delete(@Param(Field.Id, ParseIntPipe) id: number): Observable<DeleteResponseDto> {
     return this.contactService.delete(id);
   }
 }

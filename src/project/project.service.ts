@@ -21,24 +21,15 @@ export class ProjectService {
     return this.projectRepository.findOne({ id });
   }
 
-  async create(dto: ProjectDto, preview: string): Promise<Observable<Project>> {
-    const { name, description, repo, deploy, technologies } = dto;
-
+  create(dto: ProjectDto): Observable<Project> {
     return from(
       this.projectRepository.save(
-        this.projectRepository.create({
-          name,
-          description,
-          repo,
-          deploy,
-          technologies,
-          preview
-        })
+        this.projectRepository.create({ ...dto })
       )
     );
   }
 
-  async change(id: number, dto: ProjectDto, preview: string): Promise<Observable<Project>> {
+  async change(id: number, dto: ProjectDto): Promise<Observable<Project>> {
     const project: Project = await this.getOne(id);
 
     project.name = dto.name;
@@ -47,8 +38,8 @@ export class ProjectService {
     project.repo = dto.repo;
     project.technologies = dto.technologies;
 
-    if (preview) {
-      project.preview = preview;
+    if (dto.preview) {
+      project.preview = dto.preview;
     }
 
     return from(this.projectRepository.save(project));

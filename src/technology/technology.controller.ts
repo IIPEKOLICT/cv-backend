@@ -3,16 +3,14 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Param, ParseIntPipe,
   Post,
   Put,
-  UploadedFile,
   UseGuards,
   UseInterceptors,
-} from '@nestjs/common';
+} from '@nestjs/common'
 import { Field, Route } from '../shared/enums';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { FileService } from '../file/file.service';
 import { TechnologyService } from './technology.service';
 import { Observable } from 'rxjs';
 import { Technology } from './technology';
@@ -27,10 +25,7 @@ import { DeleteResponseDto } from '../shared/delete-response.dto';
 @ApiTags(Route.Technology)
 @Controller(Route.Technology)
 export class TechnologyController {
-  constructor(
-    private readonly fileService: FileService,
-    private readonly technologyService: TechnologyService
-  ) {}
+  constructor(private readonly technologyService: TechnologyService) {}
 
   @ApiOperation({ summary: TechnologyOperation.Get })
   @ApiResponse({ type: [Technology] })
@@ -45,12 +40,8 @@ export class TechnologyController {
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor(Field.Icon))
-  async create(
-    @Body() dto: TechnologyDto,
-    @UploadedFile() image?: Express.Multer.File
-  ): Promise<Observable<Technology>> {
-    const icon = await this.fileService.create(image);
-    return this.technologyService.create(dto, icon);
+  create(@Body() dto: TechnologyDto): Observable<Technology> {
+    return this.technologyService.create(dto);
   }
 
   @ApiOperation({ summary: TechnologyOperation.Change })
@@ -58,14 +49,11 @@ export class TechnologyController {
   @Auth()
   @UseGuards(AuthGuard)
   @Put(`:${Field.Id}`)
-  @UseInterceptors(FileInterceptor(Field.Icon))
-  async change(
+  change(
     @Param(Field.Id) id: number,
-    @Body() dto: ContactDto,
-    @UploadedFile() image?: Express.Multer.File
-  ): Promise<Observable<Technology>> {
-    const icon = await this.fileService.create(image);
-    return this.technologyService.change(id, dto, icon);
+    @Body() dto: ContactDto
+  ): Observable<Technology> {
+    return this.technologyService.change(id, dto);
   }
 
   @ApiOperation({ summary: TechnologyOperation.Delete })
@@ -73,7 +61,7 @@ export class TechnologyController {
   @Auth()
   @UseGuards(AuthGuard)
   @Delete(`:${Field.Id}`)
-  delete(@Param(Field.Id) id: number): Observable<DeleteResponseDto> {
+  delete(@Param(Field.Id, ParseIntPipe) id: number): Observable<DeleteResponseDto> {
     return this.technologyService.delete(id);
   }
 }

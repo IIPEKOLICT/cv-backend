@@ -21,16 +21,17 @@ export class ContactService {
     return from(this.contactRepository.find());
   }
 
-  create(dto: ContactDto, icon: string): Observable<Contact> {
+  create(dto: ContactDto): Observable<Contact> {
     return from(
       this.contactRepository.save(
-        this.contactRepository.create({ ...dto, icon })
+        this.contactRepository.create({ ...dto })
       )
     );
   }
 
-  change(id: number, dto: ContactDto, icon: string): Observable<Contact> {
-    const updatedFields: ContactDto & { icon?: string } = dto;
+  change(id: number, dto: ContactDto): Observable<Contact> {
+    const { icon, ...fields } = dto;
+    const updatedFields: Partial<ContactDto> = fields;
 
     if (icon) {
       updatedFields.icon = icon;

@@ -3,11 +3,11 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Param, ParseIntPipe,
   Post,
   Put,
   UseGuards,
-} from '@nestjs/common';
+} from '@nestjs/common'
 import { Field, Route } from '../shared/enums';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { EducationService } from './education.service';
@@ -57,7 +57,7 @@ export class EducationController {
   @Auth()
   @UseGuards(AuthGuard)
   @Delete(`:${Field.Id}`)
-  delete(@Param(Field.Id) id: number): Observable<DeleteResponseDto> {
+  delete(@Param(Field.Id, ParseIntPipe) id: number): Observable<DeleteResponseDto> {
     return this.educationService.delete(id);
   }
 }
