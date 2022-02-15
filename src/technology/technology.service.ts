@@ -4,6 +4,7 @@ import { Technology } from './technology';
 import { Repository } from 'typeorm';
 import { from, map, Observable, switchMap } from 'rxjs';
 import { TechnologyDto } from './dto/technology.dto';
+import { DeleteResponseDto } from '../shared/delete-response.dto';
 
 @Injectable()
 export class TechnologyService {
@@ -49,7 +50,7 @@ export class TechnologyService {
     );
   }
 
-  delete(id: number): Observable<number> {
-    return from(this.techRepository.delete({ id })).pipe(map(() => id));
+  delete(id: number): Observable<DeleteResponseDto> {
+    return from(this.techRepository.delete({ id })).pipe(map(() => ({ id })));
   }
 }

@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { join } from 'path';
-import { existsSync } from 'fs';
-import { mkdir, writeFile } from 'fs/promises';
 import { v4 } from 'uuid';
-import { STATIC_DIR_PATH } from '../configs/static.config';
 import { ApiError } from '../errors/api.error';
+import { BlobServiceClient } from '@azure/storage-blob';
 
 @Injectable()
 export class FileService {
+  private azureUser: string = process.env.AZURE_USER || '';
+  private azureContainer: string = process.env.AZURE_CONTAINER || '';
+  private azureUrl: string = process.env.AZURE_URL || '';
+
   async create(file?: Express.Multer.File): Promise<string> {
     if (!file) {
       return '';
@@ -16,13 +17,14 @@ export class FileService {
     try {
       const fileName = `${v4()}.png`;
 
-      if (!existsSync(STATIC_DIR_PATH)) {
-        await mkdir(STATIC_DIR_PATH, { recursive: true });
-      }
+      await BlobServiceClient.fromConnectionString(this.azureUrl)
+        .getContainerClient(this.azureContainer)
+        .getBlockBlobClient(fileName)
+        .uploadData(file.buffer);
 
-      await writeFile(join(STATIC_DIR_PATH, fileName), file.buffer);
-      return fileName;
+      return `https://${this.azureUser}.blob.core.windows.net/${this.azureContainer}/${fileName}`;
     } catch (e) {
+      console.log(e);
       ApiError.filesystem();
     }
   }

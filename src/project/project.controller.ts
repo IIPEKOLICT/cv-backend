@@ -4,9 +4,12 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
-  Put, UploadedFile,
-  UseGuards, UseInterceptors,
+  Put,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Field, Route } from '../shared/enums';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -19,6 +22,7 @@ import { Auth } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from '../file/file.service';
+import { DeleteResponseDto } from '../shared/delete-response.dto';
 
 @ApiTags(Route.Project)
 @Controller(Route.Project)
@@ -65,11 +69,13 @@ export class ProjectController {
   }
 
   @ApiOperation({ summary: ProjectOperation.Delete })
-  @ApiResponse({ type: Number })
+  @ApiResponse({ type: DeleteResponseDto })
   @Auth()
   @UseGuards(AuthGuard)
   @Delete(`:${Field.Id}`)
-  delete(@Param(Field.Id) id: number): Observable<number> {
+  delete(
+    @Param(Field.Id, ParseIntPipe) id: number
+  ): Observable<DeleteResponseDto> {
     return this.projectService.delete(id);
   }
 }

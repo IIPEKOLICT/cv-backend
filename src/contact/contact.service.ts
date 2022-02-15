@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Contact } from './contact';
 import { from, map, Observable, switchMap } from 'rxjs';
 import { ContactDto } from './dto/contact.dto';
+import { DeleteResponseDto } from '../shared/delete-response.dto';
 
 @Injectable()
 export class ContactService {
@@ -40,7 +41,9 @@ export class ContactService {
     ).pipe(switchMap(() => from(this.getOne(id))));
   }
 
-  delete(id: number): Observable<number> {
-    return from(this.contactRepository.delete({ id })).pipe(map(() => id));
+  delete(id: number): Observable<DeleteResponseDto> {
+    return from(this.contactRepository.delete({ id })).pipe(
+      map(() => ({ id }))
+    );
   }
 }

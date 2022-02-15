@@ -4,6 +4,7 @@ import { Project } from './project';
 import { Repository } from 'typeorm';
 import { from, map, Observable } from 'rxjs';
 import { ProjectDto } from './dto/project.dto';
+import { DeleteResponseDto } from '../shared/delete-response.dto';
 
 @Injectable()
 export class ProjectService {
@@ -31,13 +32,17 @@ export class ProjectService {
           repo,
           deploy,
           technologies,
-          preview
+          preview,
         })
       )
     );
   }
 
-  async change(id: number, dto: ProjectDto, preview: string): Promise<Observable<Project>> {
+  async change(
+    id: number,
+    dto: ProjectDto,
+    preview: string
+  ): Promise<Observable<Project>> {
     const project: Project = await this.getOne(id);
 
     project.name = dto.name;
@@ -53,7 +58,9 @@ export class ProjectService {
     return from(this.projectRepository.save(project));
   }
 
-  delete(id: number): Observable<number> {
-    return from(this.projectRepository.delete({ id })).pipe(map(() => id));
+  delete(id: number): Observable<DeleteResponseDto> {
+    return from(this.projectRepository.delete({ id })).pipe(
+      map(() => ({ id }))
+    );
   }
 }
