@@ -6,6 +6,5 @@ export class ProjectDto {
   @ApiProperty() readonly description: string;
   @ApiProperty() readonly deploy: string;
   @ApiProperty() readonly repo: string;
-  @ApiProperty() readonly preview: string;
   @ApiProperty({ type: [Technology] }) readonly technologies: Technology[];
 }

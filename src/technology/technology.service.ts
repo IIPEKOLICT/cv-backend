@@ -21,14 +21,31 @@ export class TechnologyService {
     return this.techRepository.findOne({ id });
   }
 
-  create(dto: TechnologyDto): Observable<Technology> {
+  async getTechnologies(ids: number[]): Promise<Technology[]> {
+    const technologies: Technology[] = [];
+
+    for (const id of ids) {
+      const technology: Technology = await this.getOne(id);
+      technologies.push(technology);
+    }
+
+    return technologies;
+  }
+
+  create(dto: TechnologyDto, icon: string): Observable<Technology> {
     return from(
-      this.techRepository.save(this.techRepository.create({ ...dto }))
+      this.techRepository.save(this.techRepository.create({ ...dto, icon }))
     );
   }
 
-  change(id: number, dto: TechnologyDto): Observable<Technology> {
-    return from(this.techRepository.update({ id }, { ...dto })).pipe(
+  change(id: number, dto: TechnologyDto, icon: string): Observable<Technology> {
+    const updatedFields: TechnologyDto & { icon?: string } = dto;
+
+    if (icon) {
+      updatedFields.icon = icon;
+    }
+
+    return from(this.techRepository.update({ id }, { ...updatedFields })).pipe(
       switchMap(() => from(this.getOne(id)))
     );
   }

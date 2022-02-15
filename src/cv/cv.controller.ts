@@ -3,11 +3,13 @@ import {
   Controller,
   Delete,
   Get,
-  Param, ParseIntPipe,
+  Param,
+  ParseIntPipe,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
-} from '@nestjs/common'
+} from '@nestjs/common';
 import { Field, Route } from '../shared/enums';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CvService } from './cv.service';
@@ -15,6 +17,7 @@ import { Observable } from 'rxjs';
 import { Cv } from './cv';
 import { CvOperation } from '../shared/docs';
 import { CvDto } from './dto/cv.dto';
+import { FileService } from '../file/file.service';
 import { Auth } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
 import { DeleteResponseDto } from '../shared/delete-response.dto';
@@ -22,7 +25,10 @@ import { DeleteResponseDto } from '../shared/delete-response.dto';
 @ApiTags(Route.Cv)
 @Controller(Route.Cv)
 export class CvController {
-  constructor(private readonly cvService: CvService) {}
+  constructor(
+    private readonly cvService: CvService,
+    private readonly fileService: FileService
+  ) {}
 
   @ApiOperation({ summary: CvOperation.GetAll })
   @ApiResponse({ type: [Cv] })
@@ -43,8 +49,12 @@ export class CvController {
   @Auth()
   @UseGuards(AuthGuard)
   @Post()
-  create(@Body() dto: CvDto): Observable<Cv> {
-    return this.cvService.create(dto);
+  async create(
+    @Body() dto: CvDto,
+    @UploadedFile() image?: Express.Multer.File
+  ): Promise<Observable<Cv>> {
+    const photo = await this.fileService.create(image);
+    return this.cvService.create(dto, photo);
   }
 
   @ApiOperation({ summary: CvOperation.Change })
@@ -54,9 +64,11 @@ export class CvController {
   @Put(`:${Field.Id}`)
   async change(
     @Param(Field.Id) id: number,
-    @Body() dto: CvDto
+    @Body() dto: CvDto,
+    @UploadedFile() image?: Express.Multer.File
   ): Promise<Observable<Cv>> {
-    return this.cvService.change(id, dto);
+    const photo = await this.fileService.create(image);
+    return this.cvService.change(id, dto, photo);
   }
 
   @ApiOperation({ summary: CvOperation.Delete })
@@ -64,7 +76,9 @@ export class CvController {
   @Auth()
   @UseGuards(AuthGuard)
   @Delete(`:${Field.Id}`)
-  delete(@Param(Field.Id, ParseIntPipe) id: number): Observable<DeleteResponseDto> {
+  delete(
+    @Param(Field.Id, ParseIntPipe) id: number
+  ): Observable<DeleteResponseDto> {
     return this.cvService.delete(id);
   }
 }

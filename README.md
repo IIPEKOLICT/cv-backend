@@ -8,8 +8,13 @@ Environment vars:
 - `JWT_SECRET` secret key for jwt tokens
 - `ADMIN_LOGIN` login for get access to admin panel
 - `ADMIN_PASSWORD` password for get access to admin panel
+- `AZURE_USER` azure client account name
+- `AZURE_CONTAINER` azure container name
+- `AZURE_URL` connection string for azure
 
 You need to set `PGSSLMODE`=no-verify for deploy on heroku
+
+[Setup Azure storage with this guide](https://www.learmoreseekmore.com/2021/03/nestjs-api-file-operations-using-azure-blob-storage.html)
 
 Setup PostgreSQl DB:
 ```shell

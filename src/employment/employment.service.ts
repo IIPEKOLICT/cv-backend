@@ -36,6 +36,8 @@ export class EmploymentService {
   }
 
   delete(id: number): Observable<DeleteResponseDto> {
-    return from(this.employmentRepository.delete({ id })).pipe(map(() => ({ id })));
+    return from(this.employmentRepository.delete({ id })).pipe(
+      map(() => ({ id }))
+    );
   }
 }

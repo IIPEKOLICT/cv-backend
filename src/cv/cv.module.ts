@@ -8,6 +8,7 @@ import { Education } from '../education/education';
 import { Employment } from '../employment/employment';
 import { Technology } from '../technology/technology';
 import { Project } from '../project/project';
+import { FileService } from '../file/file.service';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
@@ -23,6 +24,6 @@ import { AuthModule } from '../auth/auth.module';
     AuthModule,
   ],
   controllers: [CvController],
-  providers: [CvService],
+  providers: [CvService, FileService],
 })
 export class CvModule {}

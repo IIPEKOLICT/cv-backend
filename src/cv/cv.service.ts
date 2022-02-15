@@ -24,13 +24,13 @@ export class CvService {
     return from(this.getOne(id));
   }
 
-  create(dto: CvDto): Observable<Cv> {
+  create(dto: CvDto, photo: string): Observable<Cv> {
     return from(
-      this.cvRepository.save(this.cvRepository.create({ ...dto }))
+      this.cvRepository.save(this.cvRepository.create({ ...dto, photo }))
     );
   }
 
-  async change(id: number, dto: CvDto): Promise<Observable<Cv>> {
+  async change(id: number, dto: CvDto, photo: string): Promise<Observable<Cv>> {
     const cv = await this.getOne(id);
 
     cv.name = dto.name;
@@ -43,8 +43,8 @@ export class CvService {
     cv.projects = dto.projects;
     cv.technologies = dto.technologies;
 
-    if (dto.photo) {
-      cv.photo = dto.photo;
+    if (photo) {
+      cv.photo = photo;
     }
 
     return from(this.cvRepository.save(cv));

@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { dbConfig } from './configs/db.config';
 import { ContactModule } from './contact/contact.module';
+import { FileModule } from './file/file.module';
 import { TechnologyModule } from './technology/technology.module';
 import { ProjectModule } from './project/project.module';
 import { EducationModule } from './education/education.module';
@@ -16,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(dbConfig),
     ContactModule,
+    FileModule,
     TechnologyModule,
     ProjectModule,
     EducationModule,

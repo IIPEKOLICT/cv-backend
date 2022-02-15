@@ -34,6 +34,8 @@ export class EducationService {
   }
 
   delete(id: number): Observable<DeleteResponseDto> {
-    return from(this.educationRepository.delete({ id })).pipe(map(() => ({ id })));
+    return from(this.educationRepository.delete({ id })).pipe(
+      map(() => ({ id }))
+    );
   }
 }

@@ -21,17 +21,16 @@ export class ContactService {
     return from(this.contactRepository.find());
   }
 
-  create(dto: ContactDto): Observable<Contact> {
+  create(dto: ContactDto, icon: string): Observable<Contact> {
     return from(
       this.contactRepository.save(
-        this.contactRepository.create({ ...dto })
+        this.contactRepository.create({ ...dto, icon })
       )
     );
   }
 
-  change(id: number, dto: ContactDto): Observable<Contact> {
-    const { icon, ...fields } = dto;
-    const updatedFields: Partial<ContactDto> = fields;
+  change(id: number, dto: ContactDto, icon: string): Observable<Contact> {
+    const updatedFields: ContactDto & { icon?: string } = dto;
 
     if (icon) {
       updatedFields.icon = icon;
@@ -43,6 +42,8 @@ export class ContactService {
   }
 
   delete(id: number): Observable<DeleteResponseDto> {
-    return from(this.contactRepository.delete({ id })).pipe(map(() => ({ id })));
+    return from(this.contactRepository.delete({ id })).pipe(
+      map(() => ({ id }))
+    );
   }
 }

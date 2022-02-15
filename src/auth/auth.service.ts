@@ -12,9 +12,9 @@ export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
   private generateToken(dto: AuthDto): Observable<AuthResponseDto> {
-    return from(this.jwtService.sign(dto)).pipe(
-      reduce((acc: string, letter: string) => acc + letter)
-    ).pipe(map((token: string) => ({ token })));
+    return from(this.jwtService.sign(dto))
+      .pipe(reduce((acc: string, letter: string) => acc + letter))
+      .pipe(map((token: string) => ({ token })));
   }
 
   auth(): Observable<AuthResponseDto> {
